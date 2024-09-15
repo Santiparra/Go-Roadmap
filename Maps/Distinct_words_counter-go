@@ -1,0 +1,17 @@
+package main
+
+import (
+	"strings"
+)
+
+func countDistinctWords(messages []string) int {
+	distinctWords := make(map[string]int)
+	for _, message := range messages {
+		for _, word := range strings.Fields(strings.ToLower(message)) {
+			distinctWords[word] = 1
+		}
+	}
+	return len(distinctWords)
+}
+
+///NOTE IMPORTANT JUST AN EXERCISE NOT NEEDED TO CREATE A MAP; MUCH LES THE INT
