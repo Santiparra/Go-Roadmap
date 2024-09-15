@@ -5,8 +5,7 @@ func isValidPassword(password string) bool {
 	hasUpper := false
 	hasNumber := false
 
-	for i := 0; i < length; i++ {
-		char := password[i]
+	for _, char := range password {
 		if char >= 'A' && char <= 'Z' {
 			hasUpper = true
 		}
