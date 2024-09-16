@@ -1,36 +1,42 @@
 package main
 
 import (
+	"fmt"
 	"sync"
-	"time"
 )
 
-type safeCounter struct {
-	counts map[string]int
-	mu     *sync.Mutex
+func main() {
+	m := map[int]int{}
+
+	mu := &sync.RWMutex{}
+
+	go writeLoop(m, mu)
+	go readLoop(m, mu)
+	go readLoop(m, mu)
+	go readLoop(m, mu)
+	go readLoop(m, mu)
+
+	// stop program from exiting, must be killed
+	block := make(chan struct{})
+	<-block
 }
 
-func (sc safeCounter) inc(key string) {
-	sc.mu.Lock()
-	defer sc.mu.Unlock()
-	sc.slowIncrement(key)
+func writeLoop(m map[int]int, mu *sync.RWMutex) {
+	for {
+		for i := 0; i < 100; i++ {
+			mu.Lock()
+			m[i] = i
+			mu.Unlock()
+		}
+	}
 }
 
-func (sc safeCounter) val(key string) int {
-	sc.mu.Lock()
-	defer sc.mu.Unlock()
-	return sc.slowVal(key)
+func readLoop(m map[int]int, mu *sync.RWMutex) {
+	for {
+		mu.RLock()
+		for k, v := range m {
+			fmt.Println(k, "-", v)
+		}
+		mu.RUnlock()
+	}
 }
-
-func (sc safeCounter) slowIncrement(key string) {
-	tempCounter := sc.counts[key]
-	time.Sleep(time.Microsecond)
-	tempCounter++
-	sc.counts[key] = tempCounter
-}
-
-func (sc safeCounter) slowVal(key string) int {
-	time.Sleep(time.Microsecond)
-	return sc.counts[key]
-}
-
