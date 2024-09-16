@@ -19,3 +19,26 @@ func sendReports(numBatches int, ch chan int) {
 	}
 	close(ch)
 }
+
+// EXAMPLE 2
+
+func concurrentFib(n int) []int {
+	newCh := make(chan int)
+	sequence := []int{}
+	go fibonacci(n, newCh)
+	for num := range newCh {
+		sequence = append(sequence, num)
+	}
+	return sequence
+}
+
+// don't touch below this line
+
+func fibonacci(n int, ch chan int) {
+	x, y := 0, 1
+	for i := 0; i < n; i++ {
+		ch <- x
+		x, y = y, x+y
+	}
+	close(ch)
+}
