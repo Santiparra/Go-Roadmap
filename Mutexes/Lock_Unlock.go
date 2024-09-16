@@ -33,3 +33,4 @@ func (sc safeCounter) slowVal(key string) int {
 	time.Sleep(time.Microsecond)
 	return sc.counts[key]
 }
+
