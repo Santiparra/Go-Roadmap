@@ -3,13 +3,9 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 )
-
-type Item struct {
-	Name    string `json:"name"`
-	Quality int    `json:"quality"`
-}
 
 func getItems(url string) ([]Item, error) {
 	res, err := http.Get(url)
@@ -19,10 +15,12 @@ func getItems(url string) ([]Item, error) {
 	defer res.Body.Close()
 
 	var items []Item
-	decoder := json.NewDecoder(res.Body)
-	err = decoder.Decode(&items)
+	data, err := io.ReadAll(res.Body)
 	if err != nil {
 		return nil, err
 	}
-	return items, nil
+	if err = json.Unmarshal(data, &items); err != nil {
+		return nil, err
+	}
+	return items, nil 
 }
