@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/Santiparra/Go-Roadmap/Packages/mystrings"
+	mystrings "github.com/Santiparra/Go-Roadmap/Packages/mystrings"
 )
 
 func main() {
